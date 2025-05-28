@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Mobile Friendly Zaviyar Chat</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  <script src="https://togetherjs.com/togetherjs-min.js"></script>
+  <style>
+    /* Reset and base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #e5ddd5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 10px 10px 20px;
+      user-select: text;
+    }
+    header {
+      background-color: #075e54;
+      color: #fff;
+      width: 100%;
+      max-width: 480px;
+      padding: 18px;
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: 600;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+      margin-bottom: 15px;
+      user-select: none;
+    }
+
+    #setname-container {
+      display: flex;
+      width: 100%;
+      max-width: 480px;
+      gap: 10px;
+      margin-bottom: 15px;
+      padding: 0 10px;
+    }
+    #usernameInput {
+      flex: 1;
+      padding: 14px 20px;
+      border-radius: 28px;
+      font-size: 1.1rem;
+      border: 1.7px solid #aaa;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    #usernameInput:focus {
+      border-color: #128c7e;
+      box-shadow: 0 0 6px #128c7e;
+    }
+    #setNameBtn {
+      background-color: #128c7e;
+      color: white;
+      border: none;
+      padding: 14px 22px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 28px;
+      cursor: pointer;
+      box-shadow: 0 3px 8px rgba(18, 140, 126, 0.5);
+      transition: background-color 0.3s ease;
+      user-select: none;
+      flex-shrink: 0;
+    }
+    #setNameBtn:hover {
+      background-color: #0b6c5a;
+    }
+    #setNameBtn:active {
+      background-color: #095244;
+    }
+
+    #chat-container {
+      background: white;
+      width: 100%;
+      max-width: 480px;
+      height: 72vh;
+      border-radius: 15px;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.17);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    #chat-box {
+      flex: 1;
+      padding: 15px 20px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #ccc transparent;
+      background: #f9f9f9;
+    }
+    #chat-box::-webkit-scrollbar {
+      width: 8px;
+    }
+    #chat-box::-webkit-scrollbar-thumb {
+      background-color: #ccc;
+      border-radius: 10px;
+    }
+    .msg {
+      max-width: 75%;
+      margin: 6px 0;
+      padding: 12px 18px;
+      font-size: 1.05rem;
+      border-radius: 20px;
+      line-height: 1.4;
+      word-wrap: break-word;
+      animation: fadeIn 0.3s ease forwards;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      user-select: text;
+      white-space: pre-wrap;
+    }
+    .msg.you {
+      background-color: #dcf8c6;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+    .msg.friend {
+      background-color: #fff;
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+      border: 1px solid #ddd;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    #input-area {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 15px;
+      border-top: 2px solid #ddd;
+      background: white;
+    }
+    .emoji-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.55rem;
+      color: #555;
+      cursor: pointer;
+      transition: color 0.3s ease;
+      user-select: none;
+      flex-shrink: 0;
+    }
+    .emoji-btn:hover {
+      color: #128c7e;
+    }
+    #msg {
+      flex: 1;
+      padding: 13px 18px;
+      font-size: 1.05rem;
+      border-radius: 25px;
+      border: 1.7px solid #ccc;
+      outline: none;
+      transition: border-color 0.3s ease;
+      min-height: 42px;
+    }
+    #msg:focus {
+      border-color: #128c7e;
+      box-shadow: 0 0 6px #128c7e;
+    }
+    .send-btn {
+      background-color: #128c7e;
+      border: none;
+      border-radius: 50%;
+      width: 46px;
+      height: 46px;
+      color: white;
+      font-size: 1.35rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 8px rgba(18, 140, 126, 0.5);
+      transition: background-color 0.3s ease;
+      user-select: none;
+      flex-shrink: 0;
+    }
+    .send-btn:hover {
+      background-color: #0b6c5a;
+    }
+    .send-btn:active {
+      background-color: #095244;
+    }
+
+    #startTogetherBtn {
+      margin-top: 20px;
+      width: 100%;
+      max-width: 480px;
+      padding: 14px;
+      background-color: #128c7e;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 28px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(18, 140, 126, 0.5);
+      transition: background-color 0.3s ease;
+      user-select: none;
+      user-drag: none;
+    }
+    #startTogetherBtn:hover {
+      background-color: #0b6c5a;
+    }
+    #startTogetherBtn:active {
+      background-color: #095244;
+    }
+    /* Small screen tweaks */
+    @media (max-width: 400px) {
+      #usernameInput {
+        font-size: 1rem;
+        padding: 12px 14px;
+      }
+      #setNameBtn {
+        font-size: 1rem;
+        padding: 12px 18px;
+      }
+      .emoji-btn {
+        font-size: 1.3rem;
+      }
+      .send-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.15rem;
+      }
+      #chat-container {
+        height: 68vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>📱 Zaviyar Chat</header>
+
+  <div id="setname-container">
+    <input
+      type="text"
+      id="usernameInput"
+      placeholder="Enter your name"
+      autocomplete="off"
+      spellcheck="false"
+      aria-label="Enter your username"
+    />
+    <button id="setNameBtn" aria-label="Set your username">Set Name</button>
+  </div>
+
+  <div id="chat-container" aria-live="polite" aria-relevant="additions">
+    <div id="chat-box"></div>
+
+    <div id="input-area">
+      <button class="emoji-btn" onclick="addEmoji('😀')" aria-label="Add smile emoji">
+        <i class="fa-regular fa-face-smile"></i>
+      </button>
+      <button class="emoji-btn" onclick="addEmoji('❤️')" aria-label="Add heart emoji">
+        <i class="fa-solid fa-heart"></i>
+      </button>
+      <button class="emoji-btn" onclick="addEmoji('😂')" aria-label="Add laughing emoji">
+        <i class="fa-regular fa-face-laugh-squint"></i>
+      </button>
+
+      <input
+        type="text"
+        id="msg"
+        placeholder="Type a message"
+        autocomplete="off"
+        spellcheck="false"
+        aria-label="Message input"
+      />
+      <button class="send-btn" onclick="send()" aria-label="Send message">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+
+  <button id="startTogetherBtn" onclick="TogetherJS(this); return false;">
+    🔗 Start Chat
+  </button>
+
+  <audio id="pingSound" src="https://actions.google.com/sounds/v1/cartoon/pop.ogg" preload="auto"></audio>
+
+  <script>
+    const chatBox = document.getElementById('chat-box');
+    const msgInput = document.getElementById('msg');
+    const nameInput = document.getElementById('usernameInput');
+    const setNameBtn = document.getElementById('setNameBtn');
+    const ping = document.getElementById('pingSound');
+    let userName = '';
+
+    setNameBtn.addEventListener('click', () => {
+      const name = nameInput.value.trim();
+      if (!name) {
+        alert('Please enter your name first!');
+        nameInput.focus();
+        return;
+      }
+      userName = name;
+      alert('Name set to: ' + userName);
+      msgInput.focus();
+    });
+
+    function appendMsg(who, msg, isMe) {
+      const div = document.createElement('div');
+      div.className = 'msg ' + (isMe ? 'you' : 'friend');
+      div.textContent = who + ': ' + msg;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function send() {
+      const text = msgInput.value.trim();
+      if (!text) return;
+      if (!userName) {
+        alert('Please set your name first!');
+        nameInput.focus();
+        return;
+      }
+      appendMsg('You', text, true);
+      TogetherJS.send({ type: 'chat', user: userName, text: text });
+      msgInput.value = '';
+    }
+
+    TogetherJS.hub.on('chat', msg => {
+      if (!msg.sameUrl) return;
+      if (msg.user === userName) return;
+      appendMsg(msg.user || 'Friend', msg.text, false);
+      ping.play();
+    });
+
+    function addEmoji(emoji) {
+      msgInput.value += emoji;
+      msgInput.focus();
+    }
+
+    msgInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') send();
+    });
+  </script>
+</body>
+</html>
